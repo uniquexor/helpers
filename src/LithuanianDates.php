@@ -51,6 +51,55 @@
         }
 
         /**
+         * Gražina intervala nuo vieno laiko iki kito, pvz.: ( "18:30", "19:00" ) - grazins: "18:30 - 19:00"
+         *
+         * @param string $nuo - Pirmoji data formatu ("YYYY-MM-DD")
+         * @param string|null $iki - Antroji data formatu ("YYYY-MM-DD")
+         * @return string
+         */
+        public static function timeRange( string $nuo, string|null $iki, bool $with_seconds = false ) {
+
+            $format = 'H:i' . ( $with_seconds ? ':s' : '' );
+
+            $nuo_date = date( $format, strtotime( $nuo ) );
+            $iki_date = date( $format, strtotime( $iki ) );
+
+            if ( $nuo_date === $iki_date ) {
+
+                return $nuo_date;
+            } else {
+
+                return $nuo_date . ' - ' . ( $iki ?: '...' );
+            }
+        }
+
+        /**
+         * Gražina intervala nuo vieno datos/laiko iki kito, pvz.: ( "2000-01-01 18:30", "2000-01-01 19:00" ) - grazins: "2000-01-01 18:30 - 19:00"
+         *
+         * @param string $nuo - Pirmoji data formatu ("YYYY-MM-DD")
+         * @param string $iki - Antroji data formatu ("YYYY-MM-DD")
+         * @param bool $with_seconds - Ar įtraukti sekundes
+         * @return string
+         */
+        public static function dateTimeRange( string $nuo, string $iki, bool $with_seconds = false ) {
+
+            $nuo_date = date( 'Y-m-d', strtotime( $nuo ) );
+            $iki_date = date( 'Y-m-d', strtotime( $iki ) );
+
+            $format = 'H:i' . ( $with_seconds ? ':s' : '' );
+            $nuo_time = date( $format, strtotime( $nuo ) );
+            $iki_time = date( $format, strtotime( $iki ) );
+
+            if ( $nuo_date === $iki_date ) {
+
+                return $nuo_date . ' ' . self::timeRange( $nuo_time, $iki_time, $with_seconds );
+            } else {
+
+                return $nuo_date . ' ' . $nuo_time . ' - ' . $iki_date . ' ' . $iki_time;
+            }
+        }
+
+        /**
          * Pilnu tekstu išvedamas datų intervalas, pvz.: "2010 m. Sausio 1 d. - 21 d."
          *
          * @param string $nuo - Datų intervalo pradžia
